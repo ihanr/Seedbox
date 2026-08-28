@@ -1,5 +1,5 @@
 ## List of qBittorrent Version that is supported
-declare -a qb_ver_list=("4.1.9" "4.1.9.1" "4.3.8" "4.3.9" "4.6.7" "5.0.3" "5.0.4")
+declare -a qb_ver_list=("4.1.9" "4.1.9.1" "4.3.8" "4.3.9" "4.6.7" "5.0.3" "5.0.4" "5.2.2")
 #Generate the list of qBittorrent Version that is supported
 unset qb_name_list i
 for i in "${qb_ver_list[@]}"
@@ -135,7 +135,7 @@ lib_ver_check(){
 				break
 			fi
 		done
-	elif [[ "${qb_ver}" =~ "5.0." ]]; then
+	elif [[ "${qb_ver}" =~ "5.0."|"5.2." ]]; then
 		while true
 		do
 			if [[ ! "${lib_ver}" =~ "libtorrent-v1.2." ]] && [[ ! "${lib_ver}" =~ "libtorrent-v2.0." ]]; then
@@ -331,7 +331,7 @@ WebUI\Port=$qb_port
 WebUI\Username=$username
 EOF
 	rm qb_password_gen
-    elif [[ "${qb_ver}" =~ "4.4."|"4.5."|"4.6."|"5.0." ]]; then
+    elif [[ "${qb_ver}" =~ "4.4."|"4.5."|"4.6."|"5.0."|"5.2." ]]; then
         wget  https://raw.githubusercontent.com/ihanr/Seedbox/main/Torrent%20Clients/qBittorrent/$arch/qb_password_gen -O $HOME/qb_password_gen && chmod +x $HOME/qb_password_gen
         #Check if the download is successful
 		if [ $? -ne 0 ]; then

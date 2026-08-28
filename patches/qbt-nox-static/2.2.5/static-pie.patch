@@ -1,0 +1,8 @@
+--- a/qbt-nox-static.bash
++++ b/qbt-nox-static.bash
+@@ -1430,7 +1430,7 @@
+ 		qbt_static_flags=""
+ 	else
+-		qbt_static_flags="-static --static"
++		qbt_static_flags="-static-pie"
+ 	fi

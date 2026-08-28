@@ -1,0 +1,44 @@
+--- a/boost/asio/ssl/impl/rfc2818_verification.ipp
++++ b/boost/asio/ssl/impl/rfc2818_verification.ipp
+@@ -66 +66 @@
+-      if (domain->type == V_ASN1_IA5STRING && domain->data && domain->length)
++      if (ASN1_STRING_type(domain) == V_ASN1_IA5STRING && ASN1_STRING_get0_data(domain) && ASN1_STRING_length(domain))
+@@ -68,2 +68,2 @@
+-        const char* pattern = reinterpret_cast<const char*>(domain->data);
+-        std::size_t pattern_length = domain->length;
++        const char* pattern = reinterpret_cast<const char*>(ASN1_STRING_get0_data(domain));
++        std::size_t pattern_length = ASN1_STRING_length(domain);
+@@ -80 +80 @@
+-      if (ip_address->type == V_ASN1_OCTET_STRING && ip_address->data)
++      if (ASN1_STRING_type(ip_address) == V_ASN1_OCTET_STRING && ASN1_STRING_get0_data(ip_address))
+@@ -82 +82 @@
+-        if (address.is_v4() && ip_address->length == 4)
++        if (address.is_v4() && ASN1_STRING_length(ip_address) == 4)
+@@ -85 +85 @@
+-          if (memcmp(bytes.data(), ip_address->data, 4) == 0)
++          if (memcmp(bytes.data(), ASN1_STRING_get0_data(ip_address), 4) == 0)
+@@ -91 +91 @@
+-        else if (address.is_v6() && ip_address->length == 16)
++        else if (address.is_v6() && ASN1_STRING_length(ip_address) == 16)
+@@ -94 +94 @@
+-          if (memcmp(bytes.data(), ip_address->data, 16) == 0)
++          if (memcmp(bytes.data(), ASN1_STRING_get0_data(ip_address), 16) == 0)
+@@ -107 +107 @@
+-  X509_NAME* name = X509_get_subject_name(cert);
++  const X509_NAME* name = X509_get_subject_name(cert);
+@@ -109 +109 @@
+-  ASN1_STRING* common_name = 0;
++  const ASN1_STRING* common_name = 0;
+@@ -112,2 +112,2 @@
+-    X509_NAME_ENTRY* name_entry = X509_NAME_get_entry(name, i);
+-    common_name = X509_NAME_ENTRY_get_data(name_entry);
++    const X509_NAME_ENTRY* name_entry = X509_NAME_get_entry(name, i);
++    common_name = X509_NAME_ENTRY_get_data(name_entry);
+@@ -115 +115 @@
+-  if (common_name && common_name->data && common_name->length)
++  if (common_name && ASN1_STRING_get0_data(common_name) && ASN1_STRING_length(common_name))
+@@ -117,2 +117,2 @@
+-    const char* pattern = reinterpret_cast<const char*>(common_name->data);
+-    std::size_t pattern_length = common_name->length;
++    const char* pattern = reinterpret_cast<const char*>(ASN1_STRING_get0_data(common_name));
++    std::size_t pattern_length = ASN1_STRING_length(common_name);

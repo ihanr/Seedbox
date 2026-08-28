@@ -1,0 +1,13 @@
+--- a/gzguts.h
++++ b/gzguts.h
+@@ -128,8 +128,8 @@
+ #if defined UNDER_CE
+ #  include <windows.h>
+ #  define zstrerror() gz_strwinerror((DWORD)GetLastError())
+ #else
++#  include <errno.h>
+ #  ifndef NO_STRERROR
+-#    include <errno.h>
+ #    define zstrerror() strerror(errno)
+ #  else
+ #    define zstrerror() "stdio error (consult errno)"
