@@ -72,17 +72,17 @@ if [[ ! "$OS" =~ "Debian" ]] && [[ ! "$OS" =~ "Ubuntu" ]]; then	#Only Debian and
 fi
 
 if [[ "$OS" =~ "Debian" ]]; then	#Debian 10+ are supported
-	if [[ ! "$VER" =~ "10" ]] && [[ ! "$VER" =~ "11" ]] && [[ ! "$VER" =~ "12" ]]; then
+	if [[ ! "$VER" =~ "10" ]] && [[ ! "$VER" =~ "11" ]] && [[ ! "$VER" =~ "12" ]] && [[ ! "$VER" =~ "13" ]]; then
 		fail "$OS $VER is not supported"
-		info "Only Debian 10+ are supported"
+		info "Only Debian 10, 11, 12, and 13 are supported"
 		exit 1
 	fi
 fi
 
 if [[ "$OS" =~ "Ubuntu" ]]; then #Ubuntu 20.04+ are supported
-	if [[ ! "$VER" =~ "20" ]] && [[ ! "$VER" =~ "22" ]] && [[ ! "$VER" =~ "23" ]]; then
+	if [[ ! "$VER" =~ "20" ]] && [[ ! "$VER" =~ "22" ]] && [[ ! "$VER" =~ "23" ]] && [[ ! "$VER" =~ "24" ]]; then
 		fail "$OS $VER is not supported"
-		info "Only Ubuntu 20.04+ is supported"
+		info "Only Ubuntu 20.04, 22.04, 23.04, and 24.04 are supported"
 		exit 1
 	fi
 fi
@@ -241,6 +241,10 @@ while getopts "u:p:c:q:l:rbvxyz3oh" opt; do
 		;;
 	esac
 done
+
+if [[ "$OS" =~ "Ubuntu" ]] && { [[ -n "${bbrx_install:-}" ]] || [[ -n "${bbry_install:-}" ]] || [[ -n "${bbrz_install:-}" ]]; }; then
+	fail_exit "Custom BBR modules are supported on Debian only; run Ubuntu without -x, -y, or -z"
+fi
 
 # System Update & Dependencies Install
 info "Start System Update & Dependencies Install"
@@ -492,5 +496,3 @@ if [[ ! -z "$bbrv3_install_success" ]]; then
 fi
 
 exit 0
-
-
