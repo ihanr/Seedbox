@@ -41,6 +41,49 @@ bash <(wget -qO- https://raw.githubusercontent.com/ihanr/Seedbox/main/Install.sh
 
 BBR 安装完成后按脚本提示重启，再开始测速或使用。
 
+## PT 连接策略档位
+
+本仓库 2026-10-17 新构建的 `5.2.4 + libtorrent 1.2.20` 支持启动时选择档位。旧二进制、5.2.2 和其他组合不支持；仅设置环境变量不会升级程序。改动位于 [libtorrent 补丁](patches/libtorrent/1.2.20/pt-profile.patch)，没有改变 qBittorrent 版本号，也没有新增安装器参数。
+
+是否为新包，需将 `sha256sum /usr/bin/qbittorrent-nox` 的结果与[构建记录](<Torrent Clients/qBittorrent/x86_64/qBittorrent-5.2.4 - libtorrent-v1.2.20/BUILD.md>)比对；不能仅凭 `--version` 区分。
+
+| `SEEDBOX_PT_PROFILE` | `connect_seed_every_n_download` | `torrent_connect_boost` | 用途 |
+| --- | --- | --- | --- |
+| `race`（默认） | 50 | 100 | 保持原魔改策略，较偏向本机正在下载的任务 |
+| `balanced` | 10 | 100 | 下载、做种任务并存时，增加本机已完成任务获得主动连接尝试的机会 |
+| `race200`（实验） | 50 | 200 | 保持原调度比例，提高首次 tracker 响应后的立即连接尝试上限 |
+
+这两个数字不是上传带宽比例，也不是保证能连接的 peer 数。`race200` 不会让 tracker 返回更多 peer；peer 不足、总连接数已满或磁盘繁忙时，可能没有收益，甚至增加负载。其余魔改默认值保持不变，尚无生产环境对比数据证明某个档位更快。
+
+### 为 systemd 实例选择档位
+
+先确认已经使用上述新二进制。以主实例为例：
+
+```bash
+systemctl edit qbittorrent-nox@shoo.service
+```
+
+在编辑器中加入以下内容并保存：
+
+```ini
+[Service]
+Environment="SEEDBOX_PT_PROFILE=balanced"
+```
+
+然后重启该实例，重启期间会暂时中断任务：
+
+```bash
+systemctl daemon-reload
+systemctl restart qbittorrent-nox@shoo.service
+systemctl show qbittorrent-nox@shoo.service -p Environment
+```
+
+最后一条命令仅检查服务配置的环境变量。`qb2.service`、`qb3.service` 如需切换，分别执行同样操作并替换服务名；三个实例可以选择不同档位。直接在 SSH 中 `export` 后执行 `systemctl restart` 不会把变量传入服务。
+
+需要回到原策略时，在同一处改为 `Environment="SEEDBOX_PT_PROFILE=race"`，再重新加载、重启。变量未设置、为空或值不识别时也回退到 `race`。档位只在进程启动时读取，不支持热切换，不会改写配置、种子或下载目录。
+
+测试时一次只改一个实例、一个档位，对比相近新种的前 10 分钟上传量、连接建立时间，以及磁盘延迟、CPU 和内存；不同种子的人气、发布时间与线路差异会干扰结论。
+
 ## 其他可选组件
 
 这些参数可与 qBittorrent 参数组合使用：

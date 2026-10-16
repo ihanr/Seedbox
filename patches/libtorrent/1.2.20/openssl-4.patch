@@ -35,3 +35,6 @@
 -			std::size_t const name_length = aux::numeric_cast<std::size_t>(common_name->length);
 +			auto const* torrent_name = reinterpret_cast<char const*>(ASN1_STRING_get0_data(common_name));
 +			std::size_t const name_length = aux::numeric_cast<std::size_t>(ASN1_STRING_length(common_name));
+ 
+ #ifndef TORRENT_DISABLE_LOGGING
+ 			if (!names.empty()) names += " | n: ";

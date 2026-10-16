@@ -1,0 +1,46 @@
+diff --git a/src/settings_pack.cpp b/src/settings_pack.cpp
+--- a/src/settings_pack.cpp
++++ b/src/settings_pack.cpp
+@@ -38,6 +38,8 @@ POSSIBILITY OF SUCH DAMAGE.
+ #include "libtorrent/aux_/session_settings.hpp"
+ 
+ #include <algorithm>
++#include <cstdlib>
++#include <cstring>
+ 
+ namespace {
+ 
+@@ -62,5 +64,15 @@ namespace {
+ 	char const* ensure_string(char const* str)
+ 	{ return str == nullptr ? "" : str; }
++
++	int seedbox_pt_value(int const race_value, int const balanced_value, int const race200_value)
++	{
++		char const* profile = std::getenv("SEEDBOX_PT_PROFILE");
++		if (profile != nullptr && std::strcmp(profile, "balanced") == 0)
++			return balanced_value;
++		if (profile != nullptr && std::strcmp(profile, "race200") == 0)
++			return race200_value;
++		return race_value;
++	}
+ }
+ 
+ namespace libtorrent {
+@@ -316,7 +328,7 @@ constexpr int CLOSE_FILE_INTERVAL = 0;
+ 		SET(utp_loss_multiplier, 50, nullptr),
+ 		SET(mixed_mode_algorithm, settings_pack::prefer_tcp, nullptr),
+ 		SET(listen_queue_size, 3000, nullptr),
+-		SET(torrent_connect_boost, 100, nullptr),
++		SET(torrent_connect_boost, seedbox_pt_value(100, 100, 200), nullptr),
+ 		SET(alert_queue_size, 1000, &session_impl::update_alert_queue_size),
+ 		SET(max_metadata_size, 3 * 1024 * 10240, nullptr),
+ 		DEPRECATED_SET(hashing_threads, 1, nullptr),
+@@ -332,7 +344,7 @@ constexpr int CLOSE_FILE_INTERVAL = 0;
+ 		SET(peer_turnover, 4, nullptr),
+ 		SET(peer_turnover_cutoff, 90, nullptr),
+ 		SET(peer_turnover_interval, 300, nullptr),
+-		SET(connect_seed_every_n_download, 50, nullptr),
++		SET(connect_seed_every_n_download, seedbox_pt_value(50, 10, 50), nullptr),
+ 		SET(max_http_recv_buffer_size, 4*1024*204, nullptr),
+ 		SET(max_retry_port_bind, 10, nullptr),
+ 		SET(alert_mask, int(static_cast<std::uint32_t>(alert_category::error)), &session_impl::update_alert_mask),
