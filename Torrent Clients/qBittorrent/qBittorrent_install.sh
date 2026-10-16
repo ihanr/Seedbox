@@ -1,5 +1,5 @@
 ## List of qBittorrent Version that is supported
-declare -a qb_ver_list=("4.1.9" "4.1.9.1" "4.3.8" "4.3.9" "4.6.7" "5.0.3" "5.0.4" "5.2.2")
+declare -a qb_ver_list=("4.1.9" "4.1.9.1" "4.3.8" "4.3.9" "4.6.7" "5.0.3" "5.0.4" "5.2.2" "5.2.4")
 #Generate the list of qBittorrent Version that is supported
 unset qb_name_list i
 for i in "${qb_ver_list[@]}"
@@ -135,6 +135,11 @@ lib_ver_check(){
 				break
 			fi
 		done
+	elif [[ "${qb_ver}" == "qBittorrent-5.2.4" ]]; then
+		while [[ "${lib_ver}" != "libtorrent-v1.2.20" ]]; do
+			warn "The qBittorrent 5.2.4 package is available with libtorrent-v1.2.20 only"
+			lib_ver_choose
+		done
 	elif [[ "${qb_ver}" =~ "5.0."|"5.2." ]]; then
 		while true
 		do
@@ -176,6 +181,13 @@ install_qBittorrent_(){
 	qb_cache=$5
 	qb_port=$6
 	qb_incoming_port=$7
+
+	# This release ships only one architecture/libtorrent combination.
+	if [[ "$qb_ver" == "qBittorrent-5.2.4" ]] && \
+		{ [[ "$(uname -m)" != "x86_64" ]] || [[ "$lib_ver" != "libtorrent-v1.2.20" ]]; }; then
+		warn "qBittorrent 5.2.4 is available for x86_64 with libtorrent-v1.2.20 only"
+		return 1
+	fi
 
 	## Check if qBittorrent is running
 	if pgrep -i -f qbittorrent; then

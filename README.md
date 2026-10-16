@@ -13,14 +13,14 @@
 
 Ubuntu 可安装 qBittorrent、autobrr、Vertex 和 autoremove-torrents；自定义 BBRx、BBRy、BBRz（`-x`、`-y`、`-z`）目前仅支持 Debian，请勿在 Ubuntu 上使用这些参数。
 
-## 安装 qBittorrent 5.2.2
+## 安装 qBittorrent 5.2.4
 
-推荐组合为 qBittorrent `5.2.2` 与 libtorrent `v1.2.20`。该版本已包含面向 PT/Seedbox 的高并发默认参数，并提供 x86_64 静态二进制。
+推荐组合为 qBittorrent `5.2.4` 与 libtorrent `v1.2.20`，提供 x86_64 静态二进制。它沿用本仓库 5.2.2 的魔改补丁，原 5.2.2 安装包仍保留供回退。5.2.4 目前只提供这一种架构和 libtorrent 组合。
 
 下面的命令不会把密码写入 shell 历史；运行后脚本会提示输入密码：
 
 ```bash
-bash <(wget -qO- https://raw.githubusercontent.com/ihanr/Seedbox/main/Install.sh) -u shoo -c 4096 -q 5.2.2 -l v1.2.20 -x
+bash <(wget -qO- https://raw.githubusercontent.com/ihanr/Seedbox/main/Install.sh) -u shoo -c 4096 -q 5.2.4 -l v1.2.20 -x
 ```
 
 参数说明：
@@ -29,14 +29,14 @@ bash <(wget -qO- https://raw.githubusercontent.com/ihanr/Seedbox/main/Install.sh
 | --- | --- |
 | `-u shoo` | qBittorrent 运行所用的 Linux 用户名，按需替换 |
 | `-c 4096` | qBittorrent 磁盘缓存，单位 MiB；按内存情况调整 |
-| `-q 5.2.2` | qBittorrent 版本 |
-| `-l v1.2.20` | libtorrent 版本；5.2.2 请选择这一项 |
+| `-q 5.2.4` | qBittorrent 版本 |
+| `-l v1.2.20` | libtorrent 版本；5.2.4 请选择这一项 |
 | `-x` | 安装 BBRx |
 
 安装完成后，默认 WebUI 地址为 `http://服务器IP:9090`，默认入站端口为 `36666`。如需自定义端口，在命令末尾加入 `-o`；脚本会交互式询问 WebUI 和入站端口。
 
 ```bash
-bash <(wget -qO- https://raw.githubusercontent.com/ihanr/Seedbox/main/Install.sh) -u shoo -c 4096 -q 5.2.2 -l v1.2.20 -x -o
+bash <(wget -qO- https://raw.githubusercontent.com/ihanr/Seedbox/main/Install.sh) -u shoo -c 4096 -q 5.2.4 -l v1.2.20 -x -o
 ```
 
 BBR 安装完成后按脚本提示重启，再开始测速或使用。
@@ -60,7 +60,7 @@ BBR 安装完成后按脚本提示重启，再开始测速或使用。
 示例：同时安装 qBittorrent、BBRx、autobrr 与 Vertex：
 
 ```bash
-bash <(wget -qO- https://raw.githubusercontent.com/ihanr/Seedbox/main/Install.sh) -u shoo -c 4096 -q 5.2.2 -l v1.2.20 -x -b -v
+bash <(wget -qO- https://raw.githubusercontent.com/ihanr/Seedbox/main/Install.sh) -u shoo -c 4096 -q 5.2.4 -l v1.2.20 -x -b -v
 ```
 
 ## 安装后检查
@@ -81,6 +81,7 @@ sysctl net.ipv4.tcp_congestion_control
 ## 安全提示
 
 - 不要把 WebUI 直接暴露到公网；至少使用防火墙或反向代理限制访问来源。
+- 魔改补丁沿用 5.2.2 的 WebUI CSRF 防护默认关闭设置；可在 WebUI 设置中启用防护。此项不是性能优化。
 - 不要在聊天记录、截图或 Git 仓库中保存 WebUI 密码、tracker passkey、Cookie 或 SSH 私钥。
 - 更新或重装 qBittorrent 前，先备份 `/home/用户名/.config/qBittorrent/`。
 
