@@ -1,0 +1,12 @@
+diff --git a/src/base/bittorrent/sessionimpl.cpp b/src/base/bittorrent/sessionimpl.cpp
+--- a/src/base/bittorrent/sessionimpl.cpp
++++ b/src/base/bittorrent/sessionimpl.cpp
+@@ -550,7 +550,7 @@ SessionImpl::SessionImpl(QObject *parent)
+     , m_encryption(BITTORRENT_SESSION_KEY(u"Encryption"_s), 0)
+     , m_maxActiveCheckingTorrents(BITTORRENT_SESSION_KEY(u"MaxActiveCheckingTorrents"_s), 1)
+     , m_isProxyPeerConnectionsEnabled(BITTORRENT_SESSION_KEY(u"ProxyPeerConnections"_s), false)
+-    , m_chokingAlgorithm(BITTORRENT_SESSION_KEY(u"ChokingAlgorithm"_s), ChokingAlgorithm::FixedSlots
++    , m_chokingAlgorithm(BITTORRENT_SESSION_KEY(u"ChokingAlgorithm"_s), ChokingAlgorithm::RateBased
+         , clampValue(ChokingAlgorithm::FixedSlots, ChokingAlgorithm::RateBased))
+     , m_seedChokingAlgorithm(BITTORRENT_SESSION_KEY(u"SeedChokingAlgorithm"_s), SeedChokingAlgorithm::FastestUpload
+         , clampValue(SeedChokingAlgorithm::RoundRobin, SeedChokingAlgorithm::AntiLeech))
